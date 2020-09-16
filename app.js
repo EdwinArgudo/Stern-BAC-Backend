@@ -13,8 +13,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const mailchimpInstance = "us9",
-  listUniqueId = "xxx",
-  mailchimpApiKey = "xxx";
+  listUniqueId = "c842a239db",
+  mailchimpApiKey = "bf985a50508fd53cf9cdbd6607800227-us9";
 
 app.post("/subscribe", (req, res) => {
   // send to mailchimp
@@ -83,8 +83,8 @@ app.get("/attendance/:netID", (req, res) => {
 });
 
 const GOOGLE_CAL_URL = "https://www.googleapis.com/calendar/v3/calendars/";
-const API_KEY = "xxx";
-const CALENDAR_ID = "xxx";
+const API_KEY = "AIzaSyABek6rqw9ZTqA9vZLJ84YTA1YG0cgDMWE";
+const CALENDAR_ID = "analytic@stern.nyu.edu";
 const TIME_FORMAT = {
   hour: "2-digit",
   minute: "2-digit",
@@ -101,7 +101,10 @@ app.get("/calendar/:count", (req, res) => {
     orderBy: "startTime",
     key: API_KEY,
   };
-
+  //if we want to include past events
+  if (count === 0) {
+    params["timeMin"] = new Date(2020, 0, 1).toISOString();
+  }
   request
     .get(
       GOOGLE_CAL_URL + CALENDAR_ID + "/events?" + queryString.stringify(params)
@@ -110,8 +113,6 @@ app.get("/calendar/:count", (req, res) => {
       const items = data.body.items;
       let iterator = -1;
       if (count === 0) {
-        // 0 signifies all calendar items (including past ?)
-        params[timeMin] = new Date(2020, 8, 1).toISOString();
         iterator = items.length;
       } else {
         iterator = Math.min(items.length, count);
